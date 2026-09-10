@@ -311,9 +311,13 @@ const ADMIN_NAME='Кот24к';
 function isAdmin(){return ADMIN_NAMES.includes(currentUser)}
 function isProtectedAdmin(user){return ADMIN_NAMES.includes(String(user||'').trim())}
 function refreshAdminButton(){const box=document.getElementById('adminOwnerSettings');if(box)box.style.display=isAdmin()?'block':'none';refreshOwnerButton()}
-function refreshAdminUsers(){
+async function refreshAdminUsers(){
   const box=document.getElementById('adminUsers');
   if(!isAdmin()){box.innerHTML='<p class="small">⛔ Нет доступа</p>';return}
+  if(CLOUD_ENABLED&&firebaseReady){
+    box.innerHTML='<p class="small">☁️ Загружаю аккаунты из общей базы...</p>';
+    try{await loadCloudAccounts()}catch(e){console.error('Cloud admin load error',e);box.innerHTML='<p class="small">❌ Не удалось загрузить аккаунты из Firebase. Проверь правила Database.</p>';return}
+  }
   const a=getAccounts();
   const names=Object.keys(a);
   const active=names.filter(n=>!isBanned(n));
@@ -345,13 +349,23 @@ function adminReset(user){if(!isAdmin()){alert('⛔ Только создате�
 function isBanned(user){if(CLOUD_ENABLED&&firebaseReady)return !!(cloudAdminData[user]&&cloudAdminData[user].banned===true);try{const b=JSON.parse(localStorage.getItem('roadCrossBanned_v1')||'[]');return Array.isArray(b)&&b.includes(user)}catch(e){return false}}
 async function setBanned(user,value){if(CLOUD_ENABLED&&firebaseReady){cloudAdminData[user]=Object.assign({},cloudAdminData[user]||{}, {banned:!!value});await firebase.database().ref('players/'+encodeURIComponent(user)+'/banned').set(!!value);return}let b=[];try{const raw=JSON.parse(localStorage.getItem('roadCrossBanned_v1')||'[]');if(Array.isArray(raw))b=raw}catch(e){}b=b.filter(x=>x!==user);if(value)b.push(user);localStorage.setItem('roadCrossBanned_v1',JSON.stringify(b))}
 async function adminBan(user){if(!isAdmin()){alert('⛔ Только создатели проекта могут управлять аккаунтами.');return}user=String(user||'').trim();if(!user){alert('❌ Пользователь не указан.');return}if(isProtectedAdmin(user)){alert('🛡️ Админские аккаунты нельзя банить.');return}const a=getAccounts();if(!Object.prototype.hasOwnProperty.call(a,user)){alert('❌ Аккаунт не найден.');await refreshAdminUsers();return}const banned=isBanned(user);await setBanned(user,!banned);await refreshAdminUsers();alert(banned?'🔓 '+user+' разбанен.':'🚫 '+user+' забанен.')}
-function adminDelete(user){if(!isAdmin()){alert('⛔ Только Кот24к может удалять аккаунты.');return}user=String(user||'').trim();if(!user){alert('❌ Пользователь не указан.');return}if(isProtectedAdmin(user)){alert('🛡️ Админские аккаунты нельзя удалять.');return}const a=getAccounts();if(!Object.prototype.hasOwnProperty.call(a,user)){alert('❌ Аккаунт не найден.');refreshAdminUsers();return}delete a[user];saveAccounts(a);localStorage.removeItem(PLAYER_KEY+'_'+user);setBanned(user,false);refreshAdminUsers();alert('✅ Аккаунт '+user+' удалён.')}
+async function adminDelete(user){if(!isAdmin()){alert('⛔ Только Кот24к может удалять аккаунты.');return}user=String(user||'').trim();if(!user){alert('❌ Пользователь не указан.');return}if(isProtectedAdmin(user)){alert('🛡️ Админские аккаунты нельзя удалять.');return}const a=getAccounts();if(!Object.prototype.hasOwnProperty.call(a,user)){alert('❌ Аккаунт не найден.');await refreshAdminUsers();return}
+  if(CLOUD_ENABLED&&firebaseReady){
+    try{
+      await firebase.database().ref('players/'+encodeURIComponent(user)).remove();
+      await firebase.database().ref('usernames/'+encodeURIComponent(user)).remove();
+      delete cloudAccountsCache[user]; delete cloudAdminData[user];
+    }catch(e){console.error(e);alert('❌ Не удалось удалить аккаунт из Firebase.');return}
+  }else{
+    delete a[user];saveAccounts(a);localStorage.removeItem(PLAYER_KEY+'_'+user);await setBanned(user,false);
+  }
+  await refreshAdminUsers();alert('✅ Аккаунт '+user+' удалён.')}
 async function runAdminAction(action,user){
   if(action==='coins')adminCoins(user);
   else if(action==='skins')adminSkins(user);
   else if(action==='reset')adminReset(user);
   else if(action==='ban')await adminBan(user);
-  else if(action==='delete')adminDelete(user);
+  else if(action==='delete')await adminDelete(user);
 }
 
 function passwordMessage(t){document.getElementById('passwordMsg').textContent=t}
@@ -408,11 +422,12 @@ document.getElementById('logoutBtn').onclick=async()=>{if(CLOUD_ENABLED&&firebas
 if(CLOUD_ENABLED&&firebaseReady){firebase.auth().onAuthStateChanged(async u=>{cloudUser=u;if(u&&currentUser){await loadPlayerDataCloud();refreshAdminButton();refreshAdminUsers()}else if(!u&&currentUser){currentUser='';localStorage.removeItem('roadCrossCurrentUser');loginMenu.classList.remove('hidden');mainMenu.classList.add('hidden')}});loadCloudAccounts().then(()=>refreshAdminUsers()).catch(console.error)}
 if(currentUser&&!CLOUD_ENABLED){loadPlayerData();enterMain()}else if(!currentUser){mainMenu.classList.add('hidden')}
 
-document.getElementById('settingsAdminBtn').onclick=()=>{if(!isAdmin()){alert('⛔ Админка доступна только создателям проекта.');return;}refreshAdminUsers();settingsMenu.classList.add('hidden');adminMenu.classList.remove('hidden')};
+document.getElementById('settingsAdminBtn').onclick=async()=>{if(!isAdmin()){alert('⛔ Админка доступна только создателям проекта.');return;}settingsMenu.classList.add('hidden');adminMenu.classList.remove('hidden');await refreshAdminUsers()};
 document.getElementById('settingsOwnerBtn').onclick=()=>{if(!isOwner()){alert('⛔ Панель создателя доступна только Кот24к.');return;}refreshOwnerPanel();settingsMenu.classList.add('hidden');ownerMenu.classList.remove('hidden')};
-document.getElementById('adminRefreshBtn').onclick=()=>refreshAdminUsers();
-document.getElementById('adminUsers').addEventListener('click',e=>{const b=e.target.closest('button.admin-action');if(!b)return;e.preventDefault();e.stopPropagation();runAdminAction(String(b.getAttribute('data-action')||''),String(b.getAttribute('data-user')||''));}); function refreshOwnerPanel(){
+document.getElementById('adminRefreshBtn').onclick=async()=>{await refreshAdminUsers()};
+document.getElementById('adminUsers').addEventListener('click',e=>{const b=e.target.closest('button.admin-action');if(!b)return;e.preventDefault();e.stopPropagation();runAdminAction(String(b.getAttribute('data-action')||''),String(b.getAttribute('data-user')||''));}); async function refreshOwnerPanel(){
   if(!isOwner()){document.getElementById('ownerStats').textContent='⛔ Нет доступа';return}
+  if(CLOUD_ENABLED&&firebaseReady){try{await loadCloudAccounts()}catch(e){console.error(e)}}
   const names=Object.keys(getAccounts());
   const active=names.filter(n=>!isBanned(n)).length;
   const banned=names.filter(n=>isBanned(n)).length;
@@ -424,8 +439,8 @@ function refreshOwnerButton(){const b=document.getElementById('ownerBtn');if(b)b
 document.getElementById('adminBackBtn').onclick=()=>{adminMenu.classList.add('hidden');settingsMenu.classList.remove('hidden');refreshAdminButton()};
 
 document.getElementById('ownerBackBtn').onclick=()=>{ownerMenu.classList.add('hidden');if(ownerOpenedFromGame){ownerOpenedFromGame=false;paused=false;gameWrap.style.display='block';hudEl.style.display='flex';controls.style.display='block';document.getElementById('hint').style.display='block';refreshWingAbility();hud()}else{settingsMenu.classList.remove('hidden');refreshAdminButton()}};
-document.getElementById('ownerRefreshBtn').onclick=()=>{if(CLOUD_ENABLED&&firebaseReady)loadCloudAccounts().then(refreshOwnerPanel);else refreshOwnerPanel()};
-document.getElementById('ownerAdminBtn').onclick=()=>{if(!isOwner())return;ownerMenu.classList.add('hidden');settingsMenu.classList.add('hidden');adminMenu.classList.remove('hidden');refreshAdminUsers()};
+document.getElementById('ownerRefreshBtn').onclick=async()=>{await refreshOwnerPanel()};
+document.getElementById('ownerAdminBtn').onclick=async()=>{if(!isOwner())return;ownerMenu.classList.add('hidden');settingsMenu.classList.add('hidden');adminMenu.classList.remove('hidden');await refreshAdminUsers()};
 document.getElementById('ownerSkipRoadsBtn').onclick=()=>{
   if(!isOwner())return;
   const input=document.getElementById('ownerSkipRoads');
