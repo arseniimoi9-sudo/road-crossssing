@@ -6,6 +6,14 @@
 <title>🚦 Перейди дорогу — v1.0</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0b1020;color:#fff;font-family:Arial,sans-serif;text-align:center}h1{margin:14px 0 8px}.hud{display:none;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}.stat{background:#18213a;padding:8px 14px;border-radius:12px;border:1px solid #344466}.gamewrap{position:relative;width:min(900px,96vw);margin:10px auto;display:none}.gamewrap canvas{display:block;width:100%;height:auto;border:3px solid #344466;border-radius:18px;background:#222}.wingAbility{position:absolute;left:12px;top:62px;z-index:5;border:0;border-radius:12px;padding:10px 15px;background:#7c3aed;color:#fff;border:1px solid #c4b5fd;font-weight:bold;cursor:pointer;touch-action:manipulation}.wingAbility:disabled{opacity:.5;cursor:not-allowed}.pause{position:absolute;left:12px;top:12px;z-index:5;border:0;border-radius:12px;padding:10px 15px;background:#18213a;color:#fff;border:1px solid #405276;font-weight:bold;cursor:pointer}.gameOwnerBtn{position:absolute;right:12px;top:282px;z-index:6;width:48px;height:48px;border:1px solid #f0c75e;border-radius:14px;background:#18213a;color:#ffd43b;font-size:24px;font-weight:bold;cursor:pointer;box-shadow:0 4px 12px #0006}.gameOwnerBtn:hover{background:#253250}.controls{display:none;margin:12px auto 0;position:relative;width:188px;height:132px;touch-action:none;user-select:none}.control,.btn{border:0;border-radius:12px;padding:11px 17px;background:#4f8cff;color:#fff;font-size:17px;font-weight:bold;cursor:pointer}.control{position:absolute;width:58px;height:58px;margin:0;background:#202c49;border:1px solid #405276;font-size:26px;box-shadow:0 4px 12px #0005;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.control:active{transform:scale(.94);background:#2e4169}.control.up{left:65px;top:0}.control.left{left:0;top:65px}.control.down{left:65px;top:65px}.control.right{left:130px;top:65px}@media(max-width:600px){.controls{transform:scale(1.05);transform-origin:top center;margin-top:8px}.control{width:62px;height:62px;font-size:29px}}.screen{position:fixed;inset:0;background:#0b1020;display:flex;align-items:center;justify-content:center;z-index:20}.card{width:min(460px,92vw);max-height:88vh;overflow-y:auto;padding:28px;background:#172039;border:1px solid #405276;border-radius:22px;box-shadow:0 20px 60px #0008;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.control{touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.card h2{margin:0 0 10px}.menuBtns{display:flex;flex-direction:column;gap:10px}.menuBtns .btn{width:100%}.hidden{display:none!important}.skinGrid{display:grid;grid-template-columns:1fr;gap:12px;margin:18px 0}.skinBtn{height:100px;border:2px solid #405276;border-radius:16px;background:#202c49;color:white;font-size:44px;cursor:pointer}.skinBtn.selected{border-color:#4f8cff;box-shadow:0 0 0 3px #4f8cff55}.skinBtn.owned{border-color:#31d17c}.skinBtn:disabled{opacity:.55;filter:grayscale(.4)}.small{color:#aebbd2}.authInput{width:100%;padding:12px 14px;margin:6px 0;border-radius:12px;border:1px solid #405276;background:#0f172a;color:#fff;font-size:16px;outline:none}.authMsg{min-height:24px;margin:8px 0;color:#ffcf5c}.userBar{margin:8px 0 14px;color:#aebbd2;font-size:14px}.inventoryGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}.carInventoryGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:16px 0}.carInventoryItem{background:#202c49;border:2px solid #405276;border-radius:16px;padding:14px;transition:.15s}.carInventoryItem.selected{border-color:#4f8cff;box-shadow:0 0 0 3px #4f8cff55}.carInventoryItem.owned{border-color:#31d17c}.carInventoryItem .carIcon{font-size:48px;line-height:1.1;margin:4px 0 8px}.carInventoryItem .btn{width:100%;margin-top:10px;font-size:14px}.carInventoryHint{color:#aebbd2;font-size:13px;margin-top:4px}.inventoryItem{background:#202c49;border:1px solid #405276;border-radius:15px;padding:16px}.inventoryItem.equipped{border-color:#31d17c;box-shadow:0 0 0 2px #31d17c33}.inventoryItem .btn{width:100%;margin-top:10px;font-size:14px}.inventoryEmpty{padding:22px;border:1px dashed #405276;border-radius:15px;color:#aebbd2;margin:16px 0}.marketGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}.itemGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}.exclusiveItem{background:linear-gradient(135deg,#251a48,#202c49);border:2px solid #a78bfa;border-radius:15px;padding:14px;position:relative;overflow:hidden}.exclusiveItem:before{content:"ЭКСКЛЮЗИВ";position:absolute;right:-30px;top:8px;transform:rotate(35deg);background:#a78bfa;color:#0b1020;font-size:10px;font-weight:bold;padding:3px 28px}.exclusiveItem h3{margin:4px 0 8px}.exclusiveItem p{margin:5px 0;color:#c9c2e8}.exclusiveItem .btn{width:100%;margin-top:8px;font-size:14px}.marketItem{background:#202c49;border:1px solid #405276;border-radius:15px;padding:14px}.marketItem h3{margin:4px 0 8px}.marketItem p{margin:5px 0;color:#aebbd2}.price{font-weight:bold;color:#ffd43b}.marketItem .btn{width:100%;margin-top:8px;font-size:14px}.owned{opacity:.65}.settingsBtn{position:absolute;right:18px;top:18px;width:48px;height:48px;border:1px solid #405276;border-radius:14px;background:#202c49;color:#fff;font-size:24px;cursor:pointer}.mainCard{position:relative}.adminBtn{position:absolute;left:18px;top:18px;width:48px;height:48px;border:1px solid #405276;border-radius:14px;background:#202c49;color:#fff;font-size:24px;cursor:pointer}.ownerBtn{position:absolute;left:76px;top:18px;width:48px;height:48px;border:1px solid #405276;border-radius:14px;background:#202c49;color:#fff;font-size:24px;cursor:pointer}.adminBox{margin:14px 0;padding:14px;background:#10182b;border:1px solid #405276;border-radius:14px;text-align:left}.adminUser{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 0;border-bottom:1px solid #283650}.adminUser:last-child{border-bottom:0}.adminUser .adminName{min-width:120px;font-weight:bold}.adminActions{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}.adminActions .btn{font-size:12px;padding:7px 9px}.mainCard{position:relative}.settingsBox{margin:14px 0 4px;padding:14px;background:#202c49;border:1px solid #405276;border-radius:15px;text-align:left}.settingsBox h3{margin:0 0 10px}.settingsBox .authInput{margin:5px 0}.cloudStatus{font-size:12px;color:#aebbd2}
+.onlinePanel{margin:14px 0;padding:14px;background:#10182b;border:1px solid #405276;border-radius:14px;text-align:left}
+.onlinePanel h3{margin:0 0 10px}
+.onlineCount{font-weight:bold;color:#31d17c}
+.onlinePlayer{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 0;border-bottom:1px solid #283650}
+.onlinePlayer:last-child{border-bottom:0}
+.onlineDot{color:#31d17c;font-size:13px}
+.onlineTime{color:#aebbd2;font-size:12px}
+.offlineMark{color:#7f8da8;font-size:12px}
 
 <style>
 .storyCutscene{position:fixed;inset:0;z-index:100000;background:#000;display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .5s}
@@ -72,7 +80,7 @@
 
 <div class="screen" id="mainMenu"><div class="card mainCard"><button class="settingsBtn" id="settingsBtn" title="Настройки">⚙️</button><h2 id="menuTitle">🚦 Перейди дорогу <span style="font-size:.55em;opacity:.75">v1.0</span></h2><p id="menuText">Доберись до финиша и не попади под машины!</p><div class="userBar">👤 <span id="currentUser">Гость</span> <button class="btn" id="logoutBtn" style="padding:5px 9px;font-size:12px">Выйти</button></div><div class="menuBtns"><button class="btn" id="playBtn">▶ Играть</button><button class="btn" id="skinsBtn">🎨 Скины</button><button class="btn" id="inventoryBtn">🎒 Инвентарь</button><button class="btn" id="carInventoryBtn">🚗 Инвентарь машины</button><button class="btn" id="marketBtn">🛒 Маркетплейс</button><button class="btn" id="creditsBtn">👥 Создатели</button></div></div></div>
 
-<div class="screen hidden" id="adminMenu"><div class="card"><h2>🛠️ Админ-панель</h2><p class="small">Доступ только для создателей проекта</p><div class="adminBox"><h3>👥 Аккаунты</h3><div id="adminUsers"></div><button class="btn" id="adminRefreshBtn" style="margin-top:10px">🔄 Обновить список</button></div><button class="btn" id="adminBackBtn">↩ Назад</button></div></div>
+<div class="screen hidden" id="adminMenu"><div class="card"><h2>🛠️ Админ-панель</h2><p class="small">Доступ только для создателей проекта</p><div class="onlinePanel"><h3>🟢 Игроки онлайн <span class="onlineCount" id="onlineCount">0</span></h3><div id="onlinePlayers"><p class="small">Загрузка...</p></div></div><div class="adminBox"><h3>👥 Аккаунты</h3><div id="adminUsers"></div><button class="btn" id="adminRefreshBtn" style="margin-top:10px">🔄 Обновить список</button></div><button class="btn" id="adminBackBtn">↩ Назад</button></div></div>
 
 <div class="screen hidden" id="ownerMenu"><div class="card"><h2>👑 Панель создателя</h2><p class="small">Главная панель владельца проекта</p><div class="settingsBox"><h3>👑 Владелец</h3><p>Кот24к</p><p class="small">Ты имеешь полный доступ к панели создателя.</p></div><div class="settingsBox"><h3>📊 Статистика</h3><p id="ownerStats">Загрузка...</p></div><div class="settingsBox"><h3>🛠️ Быстрые действия</h3><button class="btn" id="ownerAdminBtn">🛠️ Панель аккаунтов</button><button class="btn" id="ownerRefreshBtn">🔄 Обновить статистику</button></div><div class="settingsBox"><h3>🚦 Пропуск дорог</h3><p class="small">Напиши, сколько дорог пропустить. Например, 5 — сразу перейти к 5-му финишу.</p><input class="authInput" id="ownerSkipRoads" type="number" min="1" step="1" value="1" placeholder="Сколько пропустить"><button class="btn" id="ownerSkipRoadsBtn">⏭️ Пропустить дороги</button><div class="authMsg" id="ownerSkipMsg"></div></div><button class="btn" id="ownerBackBtn">↩ Назад</button></div></div>
 
@@ -305,6 +313,27 @@ function usernameEmail(n){return String(n).trim().toLowerCase().replace(/[^a-z0-
 async function cloudRegister(n,pw){const cred=await firebase.auth().createUserWithEmailAndPassword(usernameEmail(n),pw);cloudUser=cred.user;await firebase.database().ref('players/'+encodeURIComponent(n)).set({passwordAccount:true,coins:0,ownedSkins:[0,10],skin:0,banned:false,createdAt:firebase.database.ServerValue.TIMESTAMP});await firebase.database().ref('usernames/'+encodeURIComponent(n)).set({uid:cred.user.uid});return cred}
 async function cloudLogin(n,pw){const snap=await firebase.database().ref('usernames/'+encodeURIComponent(n)).get();if(!snap.exists())throw new Error('NO_USER');const data=snap.val();const banned=await firebase.database().ref('players/'+encodeURIComponent(n)+'/banned').get();if(banned.val()===true)throw new Error('BANNED');const cred=await firebase.auth().signInWithEmailAndPassword(usernameEmail(n),pw);cloudUser=cred.user;return cred}
 async function loadCloudAccounts(){if(!CLOUD_ENABLED||!firebaseReady)return;const snap=await firebase.database().ref('players').get();const out={},data={};snap.forEach(ch=>{const raw=decodeURIComponent(ch.key);out[raw]='__cloud__';data[raw]=ch.val()||{}});cloudAccountsCache=out;cloudAdminData=data}
+let cloudPresence={};
+async function setPlayerPresence(online){
+  if(!CLOUD_ENABLED||!firebaseReady||!currentUser)return;
+  const ref=firebase.database().ref('presence/'+encodeURIComponent(currentUser));
+  try{
+    if(online){
+      await ref.onDisconnect().set({online:false,lastSeen:firebase.database.ServerValue.TIMESTAMP});
+      await ref.set({online:true,lastSeen:firebase.database.ServerValue.TIMESTAMP});
+    }else{
+      await ref.onDisconnect().cancel();
+      await ref.set({online:false,lastSeen:firebase.database.ServerValue.TIMESTAMP});
+    }
+  }catch(e){console.error('Presence error',e)}
+}
+async function loadCloudPresence(){
+  if(!CLOUD_ENABLED||!firebaseReady)return;
+  const snap=await firebase.database().ref('presence').get();
+  const out={};
+  snap.forEach(ch=>{out[decodeURIComponent(ch.key)]=ch.val()||{}});
+  cloudPresence=out;
+}
 function updateUserBar(){document.getElementById('currentUser').textContent=currentUser||'Гость';document.getElementById('settingsUser').textContent=currentUser||'Гость'}
 const ADMIN_NAMES=['Кот24к','Cat24k','Max','Kolya','MAMOHTuK_TBOu'];
 const ADMIN_NAME='Кот24к';
@@ -313,20 +342,53 @@ function isProtectedAdmin(user){return ADMIN_NAMES.includes(String(user||'').tri
 function refreshAdminButton(){const box=document.getElementById('adminOwnerSettings');if(box)box.style.display=isAdmin()?'block':'none';refreshOwnerButton()}
 async function refreshAdminUsers(){
   const box=document.getElementById('adminUsers');
-  if(!isAdmin()){box.innerHTML='<p class="small">⛔ Нет доступа</p>';return}
+  const onlineBox=document.getElementById('onlinePlayers');
+  const onlineCount=document.getElementById('onlineCount');
+  if(!isAdmin()){
+    box.innerHTML='<p class="small">⛔ Нет доступа</p>';
+    if(onlineBox)onlineBox.innerHTML='<p class="small">⛔ Нет доступа</p>';
+    if(onlineCount)onlineCount.textContent='0';
+    return;
+  }
   if(CLOUD_ENABLED&&firebaseReady){
     box.innerHTML='<p class="small">☁️ Загружаю аккаунты из общей базы...</p>';
-    try{await loadCloudAccounts()}catch(e){console.error('Cloud admin load error',e);box.innerHTML='<p class="small">❌ Не удалось загрузить аккаунты из Firebase. Проверь правила Database.</p>';return}
+    if(onlineBox)onlineBox.innerHTML='<p class="small">☁️ Проверяю игроков онлайн...</p>';
+    try{
+      await Promise.all([loadCloudAccounts(),loadCloudPresence()]);
+    }catch(e){
+      console.error('Cloud admin load error',e);
+      box.innerHTML='<p class="small">❌ Не удалось загрузить данные из Firebase. Проверь правила Database.</p>';
+      if(onlineBox)onlineBox.innerHTML='<p class="small">❌ Не удалось загрузить список онлайн.</p>';
+      return;
+    }
   }
+
   const a=getAccounts();
   const names=Object.keys(a);
   const active=names.filter(n=>!isBanned(n));
   const banned=names.filter(n=>isBanned(n));
+
+  const onlineNames=CLOUD_ENABLED&&firebaseReady
+    ? active.filter(n=>cloudPresence[n]&&cloudPresence[n].online===true)
+    : [];
+
+  if(onlineBox){
+    onlineBox.innerHTML=onlineNames.length
+      ? onlineNames.map(n=>{
+          const p=cloudPresence[n]||{};
+          return '<div class="onlinePlayer"><span class="onlineDot">●</span><span class="adminName">👤 '+escapeHtml(n)+'</span>'+(ADMIN_NAMES.includes(n)?'<span>🛡️ Админ</span>':'')+'<span class="onlineTime">онлайн сейчас</span></div>';
+        }).join('')
+      : '<p class="small">'+(CLOUD_ENABLED&&firebaseReady?'Сейчас никто из игроков не онлайн.':'Для общего списка онлайн подключи Firebase.')+'</p>';
+  }
+  if(onlineCount)onlineCount.textContent=String(onlineNames.length);
+
   const row=n=>{
     const d=getPlayerDataFor(n);
     const me=n===currentUser?' ⭐ Это ты':'';
     const adminMark=ADMIN_NAMES.includes(n)?' 🛡️ Админ':'';
-    return '<div class="adminUser"><span class="adminName">👤 '+escapeHtml(n)+me+adminMark+'</span><span>🪙 '+d.coins+'</span><span>🎨 '+d.ownedSkins.length+'/6</span><span>✅ Активен</span><div class="adminActions">'
+    const online=onlineNames.includes(n);
+    const onlineMark=online?' 🟢 Онлайн':' ⚪ Оффлайн';
+    return '<div class="adminUser"><span class="adminName">👤 '+escapeHtml(n)+me+adminMark+'</span><span>🪙 '+d.coins+'</span><span>🎨 '+d.ownedSkins.length+'/6</span><span>'+onlineMark+'</span><div class="adminActions">'
       +'<button type="button" class="btn admin-action" data-action="coins" data-user="'+escapeHtml(n)+'">+100 🪙</button>'
       +'<button type="button" class="btn admin-action" data-action="skins" data-user="'+escapeHtml(n)+'">Все скины</button>'
       +'<button type="button" class="btn admin-action" data-action="reset" data-user="'+escapeHtml(n)+'">Сброс</button>'
@@ -416,15 +478,16 @@ function buyItem(id){if(!currentUser){marketMessage('Сначала войди �
 
 function buySkin(id){if(!currentUser){marketMessage('Сначала войди в аккаунт 🔐');return}const price=skinPrices[id];if(!price){marketMessage('Ошибка скина');return}if(ownedSkins.includes(id)){skin=id;savePlayerData();refreshSkinButtons();refreshMarketButtons();marketMessage('✅ Скин уже куплен и выбран!');return}if(playerCoins<price){marketMessage('❌ Не хватает монет 🪙');return}playerCoins-=price;if(!ownedSkins.includes(id))ownedSkins.push(id);skin=id;savePlayerData();loadPlayerData();refreshMarketButtons();marketMessage('🎉 Скин куплен и сохранён!')}
 function openBox(type){const prices=[60,120,250], price=prices[type];if(playerCoins<price){marketMessage('Не хватает монет 🪙');return}playerCoins-=price;let pool=type===0?[1,2,3]:type===1?[2,3,4,5]:[3,4,5];let locked=pool.filter(x=>!ownedSkins.includes(x));let id=(locked.length?locked:pool)[Math.floor(Math.random()*(locked.length?locked:pool).length)];if(!ownedSkins.includes(id)){ownedSkins.push(id);skin=id;marketMessage('📦 Бокс открыт! Выпал скин №'+id+' 🎉')}else{playerCoins+=Math.floor(price/3);marketMessage('📦 Дубликат! Возврат '+Math.floor(price/3)+' 🪙')}savePlayerData();refreshSkinButtons();hud()}
-document.getElementById('loginBtn').onclick=async()=>{const n=document.getElementById('loginName').value.trim();const pw=document.getElementById('loginPass').value;if(!n||!pw){authMessage('Введите имя и пароль');return}try{if(CLOUD_ENABLED&&firebaseReady){await cloudLogin(n,pw)}else{const a=getAccounts();if(!a[n]){authMessage('Такого аккаунта нет');return}if(a[n]!==pw){authMessage('Неверный пароль');return}if(isBanned(n)){authMessage('🚫 Этот аккаунт заблокирован администратором');return}}currentUser=n;localStorage.setItem('roadCrossCurrentUser',n);if(CLOUD_ENABLED&&firebaseReady)await loadPlayerDataCloud();else loadPlayerData();authMessage('');enterMain();if(CLOUD_ENABLED&&firebaseReady)refreshAdminUsers()}catch(e){authMessage(e.message==='BANNED'?'🚫 Этот аккаунт заблокирован администратором':e.message==='NO_USER'?'Такого аккаунта нет':'Неверное имя или пароль')}};
-document.getElementById('registerBtn').onclick=async()=>{const n=document.getElementById('loginName').value.trim();const pw=document.getElementById('loginPass').value;if(!validName(n)){authMessage('Имя: 3–20 букв, цифр или _');return}if(pw.length<4){authMessage('Пароль должен быть не короче 4 символов');return}try{if(CLOUD_ENABLED&&firebaseReady){await cloudRegister(n,pw)}else{const a=getAccounts();if(a[n]){authMessage('Такое имя уже занято');return}a[n]=pw;saveAccounts(a)}currentUser=n;localStorage.setItem('roadCrossCurrentUser',n);if(CLOUD_ENABLED&&firebaseReady)await loadPlayerDataCloud();else loadPlayerData();authMessage('');enterMain();if(CLOUD_ENABLED&&firebaseReady)refreshAdminUsers()}catch(e){authMessage(e.code==='auth/email-already-in-use'?'Такое имя уже занято':'❌ Не удалось создать аккаунт')}};
-document.getElementById('logoutBtn').onclick=async()=>{if(CLOUD_ENABLED&&firebaseReady){try{await firebase.auth().signOut()}catch(e){}}currentUser='';localStorage.removeItem('roadCrossCurrentUser');refreshAdminButton();mainMenu.classList.add('hidden');loginMenu.classList.remove('hidden');document.getElementById('loginPass').value='';authMessage('')};
-if(CLOUD_ENABLED&&firebaseReady){firebase.auth().onAuthStateChanged(async u=>{cloudUser=u;if(u&&currentUser){await loadPlayerDataCloud();refreshAdminButton();refreshAdminUsers()}else if(!u&&currentUser){currentUser='';localStorage.removeItem('roadCrossCurrentUser');loginMenu.classList.remove('hidden');mainMenu.classList.add('hidden')}});loadCloudAccounts().then(()=>refreshAdminUsers()).catch(console.error)}
+document.getElementById('loginBtn').onclick=async()=>{const n=document.getElementById('loginName').value.trim();const pw=document.getElementById('loginPass').value;if(!n||!pw){authMessage('Введите имя и пароль');return}try{if(CLOUD_ENABLED&&firebaseReady){await cloudLogin(n,pw)}else{const a=getAccounts();if(!a[n]){authMessage('Такого аккаунта нет');return}if(a[n]!==pw){authMessage('Неверный пароль');return}if(isBanned(n)){authMessage('🚫 Этот аккаунт заблокирован администратором');return}}currentUser=n;localStorage.setItem('roadCrossCurrentUser',n);if(CLOUD_ENABLED&&firebaseReady){await loadPlayerDataCloud();await setPlayerPresence(true)}else loadPlayerData();authMessage('');enterMain();if(CLOUD_ENABLED&&firebaseReady)refreshAdminUsers()}catch(e){authMessage(e.message==='BANNED'?'🚫 Этот аккаунт заблокирован администратором':e.message==='NO_USER'?'Такого аккаунта нет':'Неверное имя или пароль')}};
+document.getElementById('registerBtn').onclick=async()=>{const n=document.getElementById('loginName').value.trim();const pw=document.getElementById('loginPass').value;if(!validName(n)){authMessage('Имя: 3–20 букв, цифр или _');return}if(pw.length<4){authMessage('Пароль должен быть не короче 4 символов');return}try{if(CLOUD_ENABLED&&firebaseReady){await cloudRegister(n,pw)}else{const a=getAccounts();if(a[n]){authMessage('Такое имя уже занято');return}a[n]=pw;saveAccounts(a)}currentUser=n;localStorage.setItem('roadCrossCurrentUser',n);if(CLOUD_ENABLED&&firebaseReady){await loadPlayerDataCloud();await setPlayerPresence(true)}else loadPlayerData();authMessage('');enterMain();if(CLOUD_ENABLED&&firebaseReady)refreshAdminUsers()}catch(e){authMessage(e.code==='auth/email-already-in-use'?'Такое имя уже занято':'❌ Не удалось создать аккаунт')}};
+document.getElementById('logoutBtn').onclick=async()=>{if(CLOUD_ENABLED&&firebaseReady){try{await setPlayerPresence(false);await firebase.auth().signOut()}catch(e){}}currentUser='';localStorage.removeItem('roadCrossCurrentUser');refreshAdminButton();mainMenu.classList.add('hidden');loginMenu.classList.remove('hidden');document.getElementById('loginPass').value='';authMessage('')};
+if(CLOUD_ENABLED&&firebaseReady){firebase.auth().onAuthStateChanged(async u=>{cloudUser=u;if(u&&currentUser){await loadPlayerDataCloud();await setPlayerPresence(true);refreshAdminButton();refreshAdminUsers()}else if(!u&&currentUser){currentUser='';localStorage.removeItem('roadCrossCurrentUser');loginMenu.classList.remove('hidden');mainMenu.classList.add('hidden')}});loadCloudAccounts().then(()=>refreshAdminUsers()).catch(console.error)}
 if(currentUser&&!CLOUD_ENABLED){loadPlayerData();enterMain()}else if(!currentUser){mainMenu.classList.add('hidden')}
 
 document.getElementById('settingsAdminBtn').onclick=async()=>{if(!isAdmin()){alert('⛔ Админка доступна только создателям проекта.');return;}settingsMenu.classList.add('hidden');adminMenu.classList.remove('hidden');await refreshAdminUsers()};
 document.getElementById('settingsOwnerBtn').onclick=()=>{if(!isOwner()){alert('⛔ Панель создателя доступна только Кот24к.');return;}refreshOwnerPanel();settingsMenu.classList.add('hidden');ownerMenu.classList.remove('hidden')};
 document.getElementById('adminRefreshBtn').onclick=async()=>{await refreshAdminUsers()};
+setInterval(()=>{const m=document.getElementById('adminMenu');if(m&&!m.classList.contains('hidden')&&isAdmin())refreshAdminUsers()},5000);
 document.getElementById('adminUsers').addEventListener('click',e=>{const b=e.target.closest('button.admin-action');if(!b)return;e.preventDefault();e.stopPropagation();runAdminAction(String(b.getAttribute('data-action')||''),String(b.getAttribute('data-user')||''));}); async function refreshOwnerPanel(){
   if(!isOwner()){document.getElementById('ownerStats').textContent='⛔ Нет доступа';return}
   if(CLOUD_ENABLED&&firebaseReady){try{await loadCloudAccounts()}catch(e){console.error(e)}}
@@ -521,6 +584,8 @@ setup();hideGame();requestAnimationFrame(loop);
     setTimeout(()=>intro.remove(),750);
   },7800);
 })();
+
+window.addEventListener('pagehide',()=>{if(CLOUD_ENABLED&&firebaseReady&&currentUser){setPlayerPresence(false).catch(()=>{})}});
 </script>
 
 <div id="blockMiniGame" class="blockMiniGame hide" aria-label="Мини-игра: поставить двадцать блоков">
