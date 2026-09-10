@@ -335,12 +335,15 @@ async function loadCloudPresence(){
   cloudPresence=out;
 }
 function updateUserBar(){document.getElementById('currentUser').textContent=currentUser||'Гость';document.getElementById('settingsUser').textContent=currentUser||'Гость'}
-const ADMIN_NAMES=['Кот24к','Cat24k','Max','Kolya','MAMOHTuK_TBOu'];
+const ADMIN_NAMES=['Кот24к','Max','Kolya','MAMOHTuK_TBOu'];
 const ADMIN_NAME='Кот24к';
 function isAdmin(){return ADMIN_NAMES.includes(currentUser)}
 function isProtectedAdmin(user){return ADMIN_NAMES.includes(String(user||'').trim())}
 function refreshAdminButton(){const box=document.getElementById('adminOwnerSettings');if(box)box.style.display=isAdmin()?'block':'none';refreshOwnerButton()}
+const adminMoneyDrafts={};
 async function refreshAdminUsers(){
+  const oldInputs=document.querySelectorAll('.adminMoneyInput[data-money-user]');
+  oldInputs.forEach(el=>{const u=el.getAttribute('data-money-user');if(u)adminMoneyDrafts[u]=el.value});
   const box=document.getElementById('adminUsers');
   const onlineBox=document.getElementById('onlinePlayers');
   const onlineCount=document.getElementById('onlineCount');
@@ -389,7 +392,8 @@ async function refreshAdminUsers(){
     const online=onlineNames.includes(n);
     const onlineMark=online?' 🟢 Онлайн':' ⚪ Оффлайн';
     return '<div class="adminUser"><span class="adminName">👤 '+escapeHtml(n)+me+adminMark+'</span><span>🪙 '+d.coins+'</span><span>🎨 '+d.ownedSkins.length+'/6</span><span>'+onlineMark+'</span><div class="adminActions">'
-      +'<button type="button" class="btn admin-action" data-action="coins" data-user="'+escapeHtml(n)+'">+100 🪙</button>'
+      +'<input class="adminMoneyInput" data-money-user="'+escapeHtml(n)+'" type="text" inputmode="numeric" value="'+escapeHtml(Object.prototype.hasOwnProperty.call(adminMoneyDrafts,n)?adminMoneyDrafts[n]:'10')+'"'+(currentUser==='Кот24к'?'':' maxlength="4"')+' style="width:80px;padding:7px;border-radius:9px;border:1px solid #405276;background:#0f172a;color:#fff" title="'+(currentUser==='Кот24к'?'Без ограничений':'Максимум 1000 монет за выдачу')+'">'
+      +'<button type="button" class="btn admin-action" data-action="coins" data-user="'+escapeHtml(n)+'">💰 Дать</button>'
       +'<button type="button" class="btn admin-action" data-action="skins" data-user="'+escapeHtml(n)+'">Все скины</button>'
       +'<button type="button" class="btn admin-action" data-action="reset" data-user="'+escapeHtml(n)+'">Сброс</button>'
       +'<button type="button" class="btn admin-action" data-action="ban" data-user="'+escapeHtml(n)+'">🚫 Бан</button>'
@@ -404,8 +408,64 @@ async function refreshAdminUsers(){
 }
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function getPlayerDataFor(user){if(CLOUD_ENABLED&&firebaseReady){const d=cloudAdminData[user]||{};return {coins:Number(d.coins)||0,ownedSkins:Array.isArray(d.ownedSkins)&&d.ownedSkins.length?d.ownedSkins:[0,10],skin:Number.isInteger(d.skin)?d.skin:0,carSkin:Number.isInteger(d.carSkin)?d.carSkin:0}}try{const d=JSON.parse(localStorage.getItem(PLAYER_KEY+'_'+user)||'null');if(d&&typeof d==='object')return {coins:Number(d.coins)||0,ownedSkins:Array.isArray(d.ownedSkins)?d.ownedSkins:[0,10],skin:Number.isInteger(d.skin)?d.skin:0,carSkin:Number.isInteger(d.carSkin)?d.carSkin:0}}catch(e){}return {coins:0,ownedSkins:[0,10],skin:0,carSkin:0}}
-function setPlayerDataFor(user,d){if(CLOUD_ENABLED&&firebaseReady){cloudAdminData[user]=Object.assign({},cloudAdminData[user]||{},d);firebase.database().ref('players/'+encodeURIComponent(user)).update(d).catch(console.error);return}localStorage.setItem(PLAYER_KEY+'_'+user,JSON.stringify(d))}
-function adminCoins(user){if(!isAdmin()){alert('⛔ Только создатели проекта могут управлять аккаунтами.');return}if(!getAccounts()[user]){alert('❌ Аккаунт не найден.');return}const d=getPlayerDataFor(user);d.coins+=100;setPlayerDataFor(user,d);if(user===currentUser)loadPlayerData();refreshAdminUsers();alert('🪙 Игроку '+user+' добавлено 100 монет.')}
+async function setPlayerDataFor(user,d){
+  if(CLOUD_ENABLED&&firebaseReady){
+    cloudAdminData[user]=Object.assign({},cloudAdminData[user]||{},d);
+    await firebase.database().ref('players/'+encodeURIComponent(user)).update(d);
+    return;
+  }
+  localStorage.setItem(PLAYER_KEY+'_'+user,JSON.stringify(d));
+}
+async function adminCoins(user){
+  if(!isAdmin()){alert('⛔ Только создатели проекта могут управлять аккаунтами.');return}
+  user=String(user||'').trim();
+  if(!user){alert('❌ Пользователь не указан.');return}
+  const accounts=getAccounts();
+  if(!Object.prototype.hasOwnProperty.call(accounts,user) && user!==currentUser){alert('❌ Аккаунт не найден.');return}
+  const rowInput=Array.from(document.querySelectorAll('.adminMoneyInput[data-money-user]')).find(el=>el.getAttribute('data-money-user')===user);
+  const input=rowInput?String(rowInput.value||'').trim():'10';
+  const coins=Number(input.replace(',', '.'));
+  const isOwner=(currentUser==='Кот24к');
+  const maxCoins=isOwner?Infinity:1000;
+  if(!input || !Number.isFinite(coins) || coins<=0){
+    alert('❌ Введи число больше 0.');
+    if(rowInput)rowInput.focus();
+    return;
+  }
+  if(!isOwner && coins>1000){
+    alert('🛡️ Для админов Max, Kolya и MAMOHTuK_TBOuK максимум — 1000 монет за одну выдачу.');
+    if(rowInput){rowInput.value='1000';rowInput.focus()}
+    return;
+  }
+  try{
+    if(CLOUD_ENABLED&&firebaseReady){
+      const ref=firebase.database().ref('players/'+encodeURIComponent(user)+'/coins');
+      if(user===currentUser){
+        // Для выдачи денег самому себе используем текущий баланс и обычную запись аккаунта.
+        const snap=await firebase.database().ref('players/'+encodeURIComponent(user)).get();
+        const d=normalizePlayerData(snap.exists()?snap.val():defaultPlayerData());
+        d.coins=Number(d.coins)||0;
+        d.coins+=coins;
+        await firebase.database().ref('players/'+encodeURIComponent(user)).update({coins:d.coins});
+        playerCoins=d.coins;
+        hud();
+      }else{
+        await ref.transaction(current=>{const n=Number(current)||0;return n+coins});
+      }
+      await loadCloudAccounts();
+    }else{
+      const d=getPlayerDataFor(user);
+      d.coins=(Number(d.coins)||0)+coins;
+      await setPlayerDataFor(user,d);
+      if(user===currentUser){playerCoins=d.coins;hud();}
+    }
+    await refreshAdminUsers();
+    alert('🪙 Игроку '+user+' добавлено '+coins+' монет.');
+  }catch(e){
+    console.error('Admin coins error',e);
+    alert('❌ Не удалось выдать монеты. Проверь Firebase Database Rules и подключение.');
+  }
+}
 function adminSkins(user){if(!isAdmin()){alert('⛔ Только создатели проекта могут управлять аккаунтами.');return}if(!getAccounts()[user]){alert('❌ Аккаунт не найден.');return}const d=getPlayerDataFor(user);d.ownedSkins=[0,1,2,3,4,5,7,8,10];if(![0,1,2,3,4,5,7,8,9,10].includes(d.skin))d.skin=0;setPlayerDataFor(user,d);if(user===currentUser)loadPlayerData();refreshAdminUsers();alert('🎨 Игроку '+user+' выданы все скины.')}
 function adminReset(user){if(!isAdmin()){alert('⛔ Только создатели проекта могут управлять аккаунтами.');return}user=String(user||'').trim();if(isProtectedAdmin(user)){alert('🛡️ Админские аккаунты нельзя сбрасывать.');return}if(!Object.prototype.hasOwnProperty.call(getAccounts(),user)){alert('❌ Аккаунт не найден.');return}setPlayerDataFor(user,{coins:0,ownedSkins:[0,10],skin:0,ownedItems:[],equippedItem:'',redeemedCodes:[]});refreshAdminUsers();alert('🔄 Прогресс '+user+' сброшен.')}
 function isBanned(user){if(CLOUD_ENABLED&&firebaseReady)return !!(cloudAdminData[user]&&cloudAdminData[user].banned===true);try{const b=JSON.parse(localStorage.getItem('roadCrossBanned_v1')||'[]');return Array.isArray(b)&&b.includes(user)}catch(e){return false}}
@@ -423,7 +483,7 @@ async function adminDelete(user){if(!isAdmin()){alert('⛔ Только Кот24
   }
   await refreshAdminUsers();alert('✅ Аккаунт '+user+' удалён.')}
 async function runAdminAction(action,user){
-  if(action==='coins')adminCoins(user);
+  if(action==='coins')await adminCoins(user);
   else if(action==='skins')adminSkins(user);
   else if(action==='reset')adminReset(user);
   else if(action==='ban')await adminBan(user);
